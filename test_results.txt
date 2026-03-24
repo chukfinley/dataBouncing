@@ -1,0 +1,215 @@
+# Data Bouncing - Full Test Results
+# Date: 2026-03-24
+# Method: Raw HTTP (port 80) with crafted Host header
+# OOB: interactsh
+#
+# Status: YES = DNS query received from Akamai edge IP
+#         NO  = No DNS interaction received
+#         CDN listed is what the domain actually resolves to
+
+# ================================================================
+# ROUND 1 - Initial Akamai CNAME domains (bare domains)
+# ================================================================
+YES  adobe.com                    # Akamai edge
+YES  nba.com                      # Akamai edge
+YES  costco.com                   # Akamai edge
+YES  cvs.com                      # Akamai edge
+YES  lowes.com                    # Akamai edge
+YES  marriott.com                 # Akamai edge
+YES  united.com                   # Akamai edge
+YES  americanexpress.com          # Akamai edge
+YES  wellsfargo.com               # Akamai edge
+NO   airbnb.com                   # Akamai CNAME but bare domain didn't work (www did)
+NO   fedex.com                    # Akamai CNAME but bare domain didn't work (www did)
+NO   ups.com                      # Akamai CNAME but bare domain didn't work (www did)
+NO   walgreens.com                # Akamai CNAME but bare domain didn't work (www did)
+NO   homedepot.com                # Akamai CNAME but bare domain didn't work (www did)
+NO   hilton.com                   # Akamai CNAME but bare domain didn't work (www did)
+NO   delta.com                    # Akamai CNAME but bare domain didn't work (www did)
+NO   chase.com                    # Akamai CNAME but bare domain didn't work (www did)
+NO   citi.com                     # Akamai CNAME but bare domain didn't work (www did)
+
+# ================================================================
+# ROUND 2 - Software / SaaS / Hardware vendors
+# ================================================================
+YES  intuit.com                   # Akamai edge
+YES  avast.com                    # Akamai edge
+YES  amd.com                      # Akamai edge
+YES  lenovo.com                   # Akamai edge
+NO   autodesk.com                 # AWS (not Akamai edge)
+NO   oracle.com                   # Oracle own infra
+NO   sap.com                      # SAP own infra
+NO   java.com                     # Oracle own infra
+NO   citrix.com                   # AWS
+NO   salesforce.com               # Akamai CNAME but different config
+NO   servicenow.com               # AWS
+NO   trendmicro.com               # Own infra
+NO   avg.com                      # Own infra
+NO   intel.com                    # Azure
+NO   nvidia.com                   # AWS
+NO   hp.com                       # CloudFront
+NO   dell.com                     # Dell own infra
+NO   cisco.com                    # Cisco own infra
+NO   webex.com                    # Cisco own infra
+NO   samsung.com                  # Samsung Korea
+NO   sony.com                     # AWS
+NO   panasonic.com                # Global Accelerator
+
+# ================================================================
+# ROUND 2b - Akamai edge confirmed domains
+# ================================================================
+YES  ea.com                       # Akamai edge
+YES  www.xbox.com                 # Akamai edge
+YES  www.playstation.com          # Akamai edge
+YES  t-mobile.com                 # Akamai edge
+YES  www.microsoft.com            # Akamai edge
+YES  hulu.com                     # Akamai edge
+YES  www.disneyplus.com           # Akamai edge
+YES  www.paramount.com            # Akamai edge
+YES  walmart.com                  # Akamai edge
+YES  macys.com                    # Akamai edge
+YES  www.bestbuy.com              # Akamai edge
+YES  www.bmw.com                  # Akamai edge
+YES  www.ford.com                 # Akamai edge
+YES  www.honda.com                # Akamai edge
+YES  www.mastercard.com           # Akamai edge
+YES  www.bankofamerica.com        # Akamai edge
+YES  www.capitalone.com           # Akamai edge
+YES  pnc.com                      # Akamai edge
+YES  www.eset.com                 # Akamai edge
+YES  www.norton.com               # Akamai edge
+YES  tiktok.com                   # Akamai edge
+YES  www.expedia.com              # Akamai edge
+YES  starbucks.com                # Akamai edge
+YES  www.mcdonalds.com            # Akamai edge
+YES  www.statefarm.com            # Akamai edge
+YES  foxnews.com                  # Akamai edge
+NO   tesla.com                    # Akamai edge but different config
+NO   newegg.com                   # Azure
+NO   office.com                   # Microsoft own
+NO   verizon.com                  # Different Akamai config
+
+# ================================================================
+# ROUND 3 - Mass test (105 domains)
+# ================================================================
+YES  www.airbnb.com               # Akamai edge
+YES  www.fedex.com                # Akamai edge
+YES  www.ups.com                  # Akamai edge
+YES  www.walgreens.com            # Akamai edge
+YES  www.homedepot.com            # Akamai edge
+YES  www.hilton.com               # Akamai edge
+YES  www.delta.com                # Akamai edge
+YES  www.chase.com                # Akamai edge
+YES  www.citi.com                 # Akamai edge
+YES  www.gap.com                  # Akamai edge
+YES  www.ebay.com                 # Akamai edge
+YES  www.alibaba.com              # Akamai edge
+YES  www.rakuten.com              # Akamai edge
+YES  www.comcast.com              # Akamai edge
+YES  www.sprint.com               # Akamai edge
+YES  www.rogers.com               # Akamai edge
+YES  www.gsk.com                  # Akamai edge
+YES  www.anthem.com               # Akamai edge
+YES  www.humana.com               # Akamai edge
+YES  www.caterpillar.com          # Akamai edge
+YES  www.deere.com                # Akamai edge
+YES  www.3m.com                   # Akamai edge
+YES  www.honeywell.com            # Akamai edge
+YES  www.schneider-electric.com   # Akamai edge
+YES  www.rockwellautomation.com   # Akamai edge
+YES  www.parker.com               # Akamai edge
+YES  www.deloitte.com             # Akamai edge
+YES  www.pwc.com                  # Akamai edge
+YES  www.mckinsey.com             # Akamai edge
+YES  www.bcg.com                  # Akamai edge
+YES  www.mit.edu                  # Akamai edge
+YES  www.uefa.com                 # Akamai edge
+YES  www.nike.com                 # Akamai edge
+YES  www.adidas.com               # Akamai edge
+YES  www.gucci.com                # Akamai edge
+YES  www.lvmh.com                 # Akamai edge
+YES  www.chanel.com               # Akamai edge
+YES  www.prada.com                # Akamai edge
+YES  www.tiffany.com              # Akamai edge
+YES  www.cartier.com              # Akamai edge
+YES  www.rolex.com                # Akamai edge
+YES  www.omega.com                # Akamai edge
+YES  www.unilever.com             # Akamai edge
+YES  www.hyatt.com                # Akamai edge
+YES  www.ihg.com                  # Akamai edge
+YES  www.wyndham.com              # Akamai edge
+YES  www.fourseasons.com          # Akamai edge
+YES  www.ritzcarlton.com          # Akamai edge
+YES  www.mgmresorts.com           # Akamai edge
+YES  www.southwest.com            # Akamai edge
+YES  www.britishairways.com       # Akamai edge
+YES  www.emirates.com             # Akamai edge
+YES  www.qantas.com               # Akamai edge
+YES  www.enterprise.com           # Akamai edge
+YES  www.nbc.com                  # Akamai edge
+YES  www.deezer.com               # Akamai edge
+YES  www.usaa.com                 # Akamai edge
+YES  www.schwab.com               # Akamai edge
+YES  www.fidelity.com             # Akamai edge
+YES  www.tdameritrade.com         # Akamai edge
+YES  www.morganstanley.com        # Akamai edge
+YES  www.goldmansachs.com         # Akamai edge
+YES  www.barclays.com             # Akamai edge
+YES  www.ubs.com                  # Akamai edge
+YES  www.kroger.com               # Akamai edge
+YES  www.publix.com               # Akamai edge
+YES  www.traderjoes.com           # Akamai edge
+YES  www.dollartree.com           # Akamai edge
+YES  www.overstock.com            # Akamai edge
+YES  www.rei.com                  # Akamai edge
+YES  www.cabelas.com              # Akamai edge
+YES  www.dickssportinggoods.com   # Akamai edge
+YES  www.sephora.com              # Akamai edge
+YES  www.ulta.com                 # Akamai edge
+YES  www.oldnavy.com              # Akamai edge
+YES  www.zara.com                 # Akamai edge
+YES  www.hm.com                   # Akamai edge
+NO   www.reebok.com               # Different config
+NO   www.cam.ac.uk                # Different config
+NO   www.bnpparibas.com           # Different config
+NO   www.hp.com                   # Different config
+NO   www.brother.com              # Different config
+NO   www.xerox.com                # Different config
+NO   www.panasonic.com            # Different config
+NO   www.philips.com              # Different config
+NO   www.lg.com                   # Different config
+NO   www.whirlpool.com            # Different config
+NO   www.electrolux.com           # Different config
+NO   www.dyson.com                # Different config
+NO   www.dhl.com                  # Different config
+NO   www.maersk.com               # Different config
+NO   www.acura.com                # Different config
+NO   www.ducati.com               # Different config
+NO   www.mercedes-benz.com        # Different config
+NO   www.volkswagen.com           # Different config
+NO   www.volvo.com                # Different config
+NO   www.subaru.com               # Different config
+NO   www.mazda.com                # Different config
+NO   www.porsche.com              # Different config
+
+# ================================================================
+# NON-AKAMAI CDNs TESTED (none bounced)
+# ================================================================
+NO   chuk.dev                     # Cloudflare
+NO   chuk.chat                    # Cloudflare
+NO   example.com                  # IANA (no CDN)
+NO   www.spotify.com              # Fastly
+NO   www.twitch.tv                # Fastly
+NO   www.amazon.com               # AWS CloudFront
+NO   www.linkedin.com             # Azure Front Door
+NO   github.com                   # No CDN
+NO   netflix.com                  # Netflix Open Connect
+
+# ================================================================
+# SUMMARY
+# ================================================================
+# Total tested:     ~150 domains
+# Confirmed YES:    117 domains
+# Confirmed NO:     ~33 domains
+# Only Akamai edge servers on port 80 are vulnerable
+# Cloudflare, Fastly, CloudFront, Azure FD: NOT vulnerable
