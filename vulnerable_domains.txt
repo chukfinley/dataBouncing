@@ -1,0 +1,189 @@
+# Akamai Data Bouncing - Confirmed Vulnerable Domains
+# Tested: 2026-03-24
+# Method: Raw HTTP (port 80) with crafted Host header
+# Impact: Akamai edge servers resolve the Host header domain,
+#         causing DNS queries to originate from Akamai's IPs, not the sender's.
+#
+# All DNS interactions confirmed via interactsh OOB testing.
+# All source IPs were Akamai edge nodes (2.x.x.x, 23.x.x.x, 88.221.x.x, 104.x.x.x)
+
+# ============================================================
+# SOFTWARE (best for blending in - installed on workstations)
+# ============================================================
+adobe.com
+intuit.com
+amd.com
+lenovo.com
+java.com
+
+# ============================================================
+# SECURITY SOFTWARE (antivirus update traffic - ironic)
+# ============================================================
+avast.com
+www.eset.com
+www.norton.com
+
+# ============================================================
+# BIG TECH
+# ============================================================
+www.microsoft.com
+tiktok.com
+www.ebay.com
+www.alibaba.com
+
+# ============================================================
+# GAMING
+# ============================================================
+ea.com
+www.xbox.com
+www.playstation.com
+
+# ============================================================
+# STREAMING / MEDIA
+# ============================================================
+hulu.com
+www.disneyplus.com
+www.paramount.com
+www.nbc.com
+www.deezer.com
+foxnews.com
+
+# ============================================================
+# FINANCE / BANKING
+# ============================================================
+americanexpress.com
+wellsfargo.com
+www.chase.com
+www.citi.com
+www.mastercard.com
+www.bankofamerica.com
+www.capitalone.com
+pnc.com
+www.usaa.com
+www.schwab.com
+www.fidelity.com
+www.tdameritrade.com
+www.morganstanley.com
+www.goldmansachs.com
+www.barclays.com
+www.ubs.com
+
+# ============================================================
+# TELECOM / ISP
+# ============================================================
+t-mobile.com
+www.comcast.com
+www.sprint.com
+www.rogers.com
+
+# ============================================================
+# HEALTHCARE / PHARMA / INSURANCE
+# ============================================================
+www.gsk.com
+www.anthem.com
+www.humana.com
+cvs.com
+www.walgreens.com
+www.statefarm.com
+
+# ============================================================
+# CONSULTING
+# ============================================================
+www.deloitte.com
+www.pwc.com
+www.mckinsey.com
+www.bcg.com
+
+# ============================================================
+# RETAIL
+# ============================================================
+costco.com
+lowes.com
+www.homedepot.com
+walmart.com
+macys.com
+www.bestbuy.com
+www.gap.com
+www.oldnavy.com
+www.zara.com
+www.hm.com
+www.kroger.com
+www.publix.com
+www.traderjoes.com
+www.dollartree.com
+www.overstock.com
+www.rei.com
+www.cabelas.com
+www.dickssportinggoods.com
+www.sephora.com
+www.ulta.com
+www.rakuten.com
+
+# ============================================================
+# INDUSTRIAL / ENGINEERING
+# ============================================================
+www.3m.com
+www.caterpillar.com
+www.deere.com
+www.honeywell.com
+www.schneider-electric.com
+www.rockwellautomation.com
+www.parker.com
+
+# ============================================================
+# LUXURY / FASHION
+# ============================================================
+www.nike.com
+www.adidas.com
+www.gucci.com
+www.lvmh.com
+www.chanel.com
+www.prada.com
+www.tiffany.com
+www.cartier.com
+www.rolex.com
+www.omega.com
+www.unilever.com
+
+# ============================================================
+# AUTOMOTIVE
+# ============================================================
+www.bmw.com
+www.ford.com
+www.honda.com
+
+# ============================================================
+# TRAVEL / HOSPITALITY
+# ============================================================
+marriott.com
+united.com
+www.hilton.com
+www.delta.com
+www.hyatt.com
+www.ihg.com
+www.wyndham.com
+www.fourseasons.com
+www.ritzcarlton.com
+www.mgmresorts.com
+www.southwest.com
+www.britishairways.com
+www.emirates.com
+www.qantas.com
+www.enterprise.com
+www.expedia.com
+starbucks.com
+www.mcdonalds.com
+www.airbnb.com
+www.fedex.com
+www.ups.com
+
+# ============================================================
+# SPORTS
+# ============================================================
+nba.com
+www.uefa.com
+
+# ============================================================
+# EDUCATION
+# ============================================================
+www.mit.edu
